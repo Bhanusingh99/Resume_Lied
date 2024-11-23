@@ -14,6 +14,7 @@ import {
   HelpCircle,
 } from "lucide-react";
 import { MobileNav } from "./mobileNavbar";
+import { FaBrain } from "react-icons/fa";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -86,8 +87,8 @@ const Navbar = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 md:h-20">
             <div className="flex-shrink-0">
-              <span className="text-xl md:text-2xl font-bold text-purple-500">
-                ResumAI
+              <span className=" font-bold text-lime-500">
+                <FaBrain size={32} />
               </span>
             </div>
 
@@ -97,7 +98,7 @@ const Navbar = () => {
                 onMouseEnter={() => setActiveDropdown("features")}
                 onMouseLeave={() => setActiveDropdown(null)}
               >
-                <button className="flex items-center gap-1 text-neutral-200 hover:text-purple-500 transition-colors">
+                <button className="flex items-center gap-1 text-neutral-200 hover:text-lime-500 transition-colors">
                   Features
                   <ChevronDown className="w-4 h-4" />
                 </button>
@@ -107,7 +108,7 @@ const Navbar = () => {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
-                      className="absolute left-0 mt-2 w-64 rounded-xl bg-neutral-900 border border-neutral-800 shadow-xl"
+                      className="absolute left-0 mt-2 w-64 rounded-xl bg-neutral-800/50 border border-neutral-700/50 shadow-xl backdrop-blur-sm"
                     >
                       <div className="p-2">
                         {features.map((feature, index) => (
@@ -115,9 +116,9 @@ const Navbar = () => {
                             key={index}
                             href="#"
                             whileHover={{ x: 4 }}
-                            className="flex items-start gap-3 p-3 rounded-lg hover:bg-neutral-800 transition-colors"
+                            className="flex items-start gap-3 p-3 rounded-lg hover:bg-neutral-700/50 transition-colors"
                           >
-                            <span className="mt-0.5 text-purple-500">
+                            <span className="mt-0.5 text-lime-400">
                               {feature.icon}
                             </span>
                             <div>
@@ -141,7 +142,7 @@ const Navbar = () => {
                 onMouseEnter={() => setActiveDropdown("resources")}
                 onMouseLeave={() => setActiveDropdown(null)}
               >
-                <button className="flex items-center gap-1 text-neutral-200 hover:text-purple-500 transition-colors">
+                <button className="flex items-center gap-1 text-neutral-200 hover:text-lime-500 transition-colors">
                   Resources
                   <ChevronDown className="w-4 h-4" />
                 </button>
@@ -151,7 +152,7 @@ const Navbar = () => {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
-                      className="absolute left-0 mt-2 w-64 rounded-xl bg-neutral-900 border border-neutral-800 shadow-xl"
+                      className="absolute left-0 mt-2 w-64 rounded-xl bg-neutral-800/50 border border-neutral-700/50 shadow-xl backdrop-blur-sm"
                     >
                       <div className="p-2">
                         {resources.map((resource, index) => (
@@ -159,9 +160,9 @@ const Navbar = () => {
                             key={index}
                             href="#"
                             whileHover={{ x: 4 }}
-                            className="flex items-start gap-3 p-3 rounded-lg hover:bg-neutral-800 transition-colors"
+                            className="flex items-start gap-3 p-3 rounded-lg hover:bg-neutral-700/50 transition-colors"
                           >
-                            <span className="mt-0.5 text-purple-500">
+                            <span className="mt-0.5 text-lime-400">
                               {resource.icon}
                             </span>
                             <div>
@@ -182,17 +183,17 @@ const Navbar = () => {
 
               <a
                 href="#"
-                className="text-neutral-200 hover:text-purple-500 transition-colors"
+                className="text-neutral-200 hover:text-lime-500 transition-colors"
               >
                 Pricing
               </a>
             </div>
 
             <div className="hidden md:flex items-center gap-4">
-              <button className="text-neutral-200 hover:text-purple-500 transition-colors">
+              <button className="text-neutral-200 hover:text-lime-500 transition-colors">
                 Sign in
               </button>
-              <button className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-medium transition-all">
+              <button className="px-4 py-2 bg-lime-600 hover:bg-lime-700 text-white rounded-xl font-medium transition-all">
                 Get Started
               </button>
             </div>
@@ -200,7 +201,7 @@ const Navbar = () => {
             <div className="md:hidden">
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="text-neutral-200 hover:text-purple-500 transition-colors"
+                className="text-neutral-200 hover:text-lime-500 transition-colors"
                 aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
               >
                 {isMobileMenuOpen ? (

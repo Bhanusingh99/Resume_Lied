@@ -10,9 +10,9 @@ interface MobileNavItemProps {
 const MobileNavItem = ({ icon, title, description }: MobileNavItemProps) => (
   <a
     href="#"
-    className="flex items-center gap-3 p-2 rounded-lg hover:bg-neutral-800 text-neutral-200 transition-all"
+    className="flex items-center gap-3 p-2 rounded-lg hover:bg-neutral-800/70 text-neutral-200 transition-all"
   >
-    <span className="text-purple-400">{icon}</span>
+    <span className="text-lime-400">{icon}</span>
     <div>
       <div className="text-sm font-medium">{title}</div>
       {description && (
@@ -60,7 +60,7 @@ export const MobileNav = () => {
         initial={{ opacity: 0, height: 0 }}
         animate={{ opacity: 1, height: "auto" }}
         exit={{ opacity: 0, height: 0 }}
-        className="md:hidden bg-neutral-900 border-t border-neutral-800"
+        className="md:hidden bg-neutral-900/80 border-t border-neutral-800/50 backdrop-blur-lg"
       >
         <div className="px-4 py-6 space-y-6">
           <div className="space-y-4">
@@ -82,10 +82,10 @@ export const MobileNav = () => {
           </div>
 
           <div className="space-y-3 pt-4">
-            <button className="w-full px-4 py-2.5 bg-neutral-800 text-neutral-200 rounded-xl hover:bg-neutral-700 transition-colors text-sm font-medium">
+            <button className="w-full px-4 py-2.5 bg-neutral-800/50 text-neutral-200 rounded-xl hover:bg-neutral-700/50 transition-colors text-sm font-medium border border-neutral-700/50 backdrop-blur-sm">
               Sign in
             </button>
-            <button className="w-full px-4 py-2.5 bg-gradient-to-r from-purple-500 to-indigo-600 text-white rounded-xl font-medium hover:shadow-lg hover:shadow-purple-500/25 transition-all text-sm">
+            <button className="w-full px-4 py-2.5 bg-lime-600 hover:bg-lime-700 text-white rounded-xl font-medium transition-all text-sm">
               Get Started
             </button>
           </div>
