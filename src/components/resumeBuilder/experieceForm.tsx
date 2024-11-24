@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ChevronUp, ChevronDown, Trash2, Plus } from "lucide-react";
-import InputField from "./inputField";
+import { AnimatePresence, motion } from "framer-motion";
+import { ChevronUp, ChevronDown, Trash2, Plus, Check } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 
 interface Experience {
   id: string;
@@ -10,8 +11,11 @@ interface Experience {
   startDate: string;
   endDate: string;
   city: string;
+  employmentType: string;
   currentlyWork: boolean;
   description: string;
+  highlights: string[];
+  isValid: boolean;
 }
 
 interface ExperienceFormProps {
@@ -19,11 +23,24 @@ interface ExperienceFormProps {
   setExperiences: React.Dispatch<React.SetStateAction<Experience[]>>;
 }
 
+// const employmentTypes = ["Full-time", "Part-time", "Contract", "Internship"];
+
 const ExperienceForm: React.FC<ExperienceFormProps> = ({
   experiences,
   setExperiences,
 }) => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  // const [currentHighlight, setCurrentHighlight] = useState<string>("");
+
+  const validateExperience = (exp: Experience): boolean => {
+    return !!(
+      exp.jobTitle &&
+      exp.employer &&
+      exp.startDate &&
+      (exp.currentlyWork || exp.endDate) &&
+      exp.description
+    );
+  };
 
   const addExperience = () => {
     const newExperience: Experience = {
@@ -33,15 +50,14 @@ const ExperienceForm: React.FC<ExperienceFormProps> = ({
       startDate: "",
       endDate: "",
       city: "",
+      employmentType: "Full-time",
       currentlyWork: false,
       description: "",
+      highlights: [],
+      isValid: false,
     };
     setExperiences([newExperience, ...experiences]);
     setExpandedId(newExperience.id);
-  };
-
-  const deleteExperience = (id: string) => {
-    setExperiences(experiences.filter((exp) => exp.id !== id));
   };
 
   const updateExperience = <T extends keyof Experience>(
@@ -50,58 +66,63 @@ const ExperienceForm: React.FC<ExperienceFormProps> = ({
     value: Experience[T]
   ) => {
     setExperiences(
-      experiences.map((exp) =>
-        exp.id === id ? { ...exp, [field]: value } : exp
-      )
+      experiences.map((exp) => {
+        if (exp.id === id) {
+          const updatedExp = { ...exp, [field]: value };
+          updatedExp.isValid = validateExperience(updatedExp);
+          return updatedExp;
+        }
+        return exp;
+      })
     );
-  };
-
-  const toggleExpanded = (id: string) => {
-    setExpandedId(expandedId === id ? null : id);
   };
 
   const ExperienceCard = ({ experience }: { experience: Experience }) => {
     const isExpanded = expandedId === experience.id;
 
     return (
-      <motion.div
-        layout
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -20 }}
-        className="w-full bg-neutral-800/80 rounded-xl shadow-sm border border-neutral-700 overflow-hidden"
-      >
+      <Card className="bg-neutral-900 border border-neutral-800">
         <div
-          className="flex items-center justify-between p-4 cursor-pointer "
-          onClick={() => toggleExpanded(experience.id)}
+          className="p-4 cursor-pointer"
+          onClick={() => setExpandedId(isExpanded ? null : experience.id)}
         >
-          <div className="flex-1">
-            <h3 className="font-medium text-neutral-400">
-              {experience.jobTitle || "(Not specified)"}
-            </h3>
-            <p className="text-sm text-neutral-600">
-              {experience.employer
-                ? `${experience.employer}${
-                    experience.city ? `, ${experience.city}` : ""
-                  }`
-                : "Unknown - Unknown"}
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                deleteExperience(experience.id);
-              }}
-              className="p-2  rounded-lg text-red-500 transition-colors"
-            >
-              <Trash2 className="w-4 h-4" />
-            </button>
-            {isExpanded ? (
-              <ChevronUp className="w-5 h-5 text-neutral-500" />
-            ) : (
-              <ChevronDown className="w-5 h-5 text-neutral-500" />
-            )}
+          <div className="flex items-center justify-between">
+            <div className="flex-1">
+              <div className="flex items-center gap-2">
+                <h3 className="text-lg font-semibold text-neutral-100">
+                  {experience.jobTitle || "(Not specified)"}
+                </h3>
+                {experience.isValid && (
+                  <Badge className="bg-green-500/10 text-green-500">
+                    <Check className="w-3 h-3 mr-1" />
+                    Complete
+                  </Badge>
+                )}
+              </div>
+              <p className="text-sm text-neutral-400">
+                {[experience.employer, experience.city]
+                  .filter(Boolean)
+                  .join(" • ")}
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setExperiences(
+                    experiences.filter((e) => e.id !== experience.id)
+                  );
+                }}
+                className="p-2 text-red-400 hover:text-red-300"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+              {isExpanded ? (
+                <ChevronUp className="w-5 h-5 text-neutral-400" />
+              ) : (
+                <ChevronDown className="w-5 h-5 text-neutral-400" />
+              )}
+            </div>
           </div>
         </div>
 
@@ -113,78 +134,86 @@ const ExperienceForm: React.FC<ExperienceFormProps> = ({
               exit={{ height: 0 }}
               className="overflow-hidden"
             >
-              <div className="p-4 pt-0 space-y-6">
+              <div className="p-4 space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <InputField
-                    label="Job Title"
-                    name="jobTitle"
-                    value={experience.jobTitle}
-                    onChange={(e) =>
-                      updateExperience(
-                        experience.id,
-                        "jobTitle",
-                        e.target.value
-                      )
-                    }
-                    placeholder="e.g. Software Engineer"
-                    required
-                  />
-                  <InputField
-                    label="Employer"
-                    name="employer"
-                    value={experience.employer}
-                    onChange={(e) =>
-                      updateExperience(
-                        experience.id,
-                        "employer",
-                        e.target.value
-                      )
-                    }
-                    placeholder="e.g. Google"
-                    required
-                  />
-                  <InputField
-                    label="Start Date"
-                    name="startDate"
-                    type="date"
-                    value={experience.startDate}
-                    onChange={(e) =>
-                      updateExperience(
-                        experience.id,
-                        "startDate",
-                        e.target.value
-                      )
-                    }
-                    required
-                  />
-                  {!experience.currentlyWork && (
-                    <InputField
-                      label="End Date"
-                      name="endDate"
-                      type="date"
-                      value={experience.endDate}
+                  <div>
+                    <label className="block text-sm font-medium text-neutral-300 mb-1">
+                      Job Title *
+                    </label>
+                    <input
+                      type="text"
+                      value={experience.jobTitle}
                       onChange={(e) =>
                         updateExperience(
                           experience.id,
-                          "endDate",
+                          "jobTitle",
                           e.target.value
                         )
                       }
-                      required
+                      className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-md text-neutral-100"
+                      placeholder="e.g. Senior Software Engineer"
                     />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-neutral-300 mb-1">
+                      Employer *
+                    </label>
+                    <input
+                      type="text"
+                      value={experience.employer}
+                      onChange={(e) =>
+                        updateExperience(
+                          experience.id,
+                          "employer",
+                          e.target.value
+                        )
+                      }
+                      className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-md text-neutral-100"
+                      placeholder="e.g. Google"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-neutral-300 mb-1">
+                      Start Date *
+                    </label>
+                    <input
+                      type="date"
+                      value={experience.startDate}
+                      onChange={(e) =>
+                        updateExperience(
+                          experience.id,
+                          "startDate",
+                          e.target.value
+                        )
+                      }
+                      className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-md text-neutral-100"
+                    />
+                  </div>
+
+                  {!experience.currentlyWork && (
+                    <div>
+                      <label className="block text-sm font-medium text-neutral-300 mb-1">
+                        End Date *
+                      </label>
+                      <input
+                        type="date"
+                        value={experience.endDate}
+                        onChange={(e) =>
+                          updateExperience(
+                            experience.id,
+                            "endDate",
+                            e.target.value
+                          )
+                        }
+                        className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-md text-neutral-100"
+                      />
+                    </div>
                   )}
-                  <InputField
-                    label="City"
-                    name="city"
-                    value={experience.city}
-                    onChange={(e) =>
-                      updateExperience(experience.id, "city", e.target.value)
-                    }
-                    placeholder="e.g. San Francisco"
-                  />
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 mt-2">
                   <input
                     type="checkbox"
                     id={`currentWork-${experience.id}`}
@@ -196,73 +225,53 @@ const ExperienceForm: React.FC<ExperienceFormProps> = ({
                         e.target.checked
                       )
                     }
-                    className="rounded border-neutral-300 text-lime-500 focus:ring-blue-500/20"
+                    className="rounded border-neutral-600 bg-neutral-800 text-lime-500"
                   />
-                  <label
-                    htmlFor={`currentWork-${experience.id}`}
-                    className="text-sm text-neutral-700"
-                  >
+                  <label className="text-sm text-neutral-300">
                     I currently work here
                   </label>
                 </div>
 
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-neutral-700">
-                    DESCRIPTION
+                <div>
+                  <label className="block text-sm font-medium text-neutral-300 mb-1">
+                    Description *
                   </label>
-                  <div className="border border-neutral-200 rounded-xl overflow-hidden">
-                    <div className="border-b border-neutral-200 p-2 flex gap-2">
-                      <button className="p-1.5 hover:bg-neutral-100 rounded">
-                        <span className="font-bold">B</span>
-                      </button>
-                      <button className="p-1.5 hover:bg-neutral-100 rounded">
-                        <span className="italic">I</span>
-                      </button>
-                      <button className="p-1.5 hover:bg-neutral-100 rounded">
-                        <span className="underline">U</span>
-                      </button>
-                    </div>
-                    <textarea
-                      value={experience.description}
-                      onChange={(e) =>
-                        updateExperience(
-                          experience.id,
-                          "description",
-                          e.target.value
-                        )
-                      }
-                      placeholder="Write your work experience..."
-                      className="w-full p-4 min-h-[200px] outline-none resize-none"
-                    />
-                  </div>
+                  <textarea
+                    value={experience.description}
+                    onChange={(e) =>
+                      updateExperience(
+                        experience.id,
+                        "description",
+                        e.target.value
+                      )
+                    }
+                    placeholder="Describe your role, responsibilities, and achievements..."
+                    className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-md text-neutral-100 min-h-[150px] resize-y"
+                  />
                 </div>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
-      </motion.div>
+      </Card>
     );
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto mt-10 space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-3xl text-white md:text-3xl lg:text-5xl font-bold">
-            <span className="text-lime-400">Tell us</span> about your experience
-          </h2>
-          <p className="text-neutral-600 text-sm md:text-base mt-1">
-            Start with your recent job
-          </p>
-        </div>
+    <div className="w-full my-10 shadow-lg rounded-lg max-sm:px-4 max-sm:py-2.5 bg-neutral-800/50 border border-neutral-700 p-6 mx-auto space-y-6">
+      <div>
+        <h2 className="text-3xl md:text-3xl lg:text-5xl text-white font-bold">
+          <span className="text-lime-400">Professional</span> Experience
+        </h2>
+        <p className="text-neutral-400 mt-1">
+          Add your most recent work experience first
+        </p>
       </div>
 
       <div className="space-y-4">
-        <AnimatePresence>
-          {experiences.map((experience) => (
-            <ExperienceCard key={experience.id} experience={experience} />
-          ))}
-        </AnimatePresence>
+        {experiences.map((experience) => (
+          <ExperienceCard key={experience.id} experience={experience} />
+        ))}
       </div>
 
       <button
@@ -270,13 +279,8 @@ const ExperienceForm: React.FC<ExperienceFormProps> = ({
         className="flex items-center gap-2 text-lime-400 px-4 py-2 bg-neutral-800 rounded-md border border-neutral-700"
       >
         <Plus className="w-4 h-4" />
-        Add Employment
+        Add Experience
       </button>
-
-      <p className="text-sm text-neutral-600">
-        In this section, list related employment experience in your last 10
-        years along with the dates. Mention the most recent employment first.
-      </p>
     </div>
   );
 };

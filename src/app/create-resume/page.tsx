@@ -1,9 +1,10 @@
 "use client";
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Check } from "lucide-react";
+import { Check, MoveLeft } from "lucide-react";
 import ContactForm from "@/components/resumeBuilder/contactForm";
 import ExperienceForm from "@/components/resumeBuilder/experieceForm";
+import EducationForm from "@/components/resumeBuilder/educationForm";
 
 interface Step {
   id: string;
@@ -34,10 +35,10 @@ const ResumeBuilder: React.FC = () => {
   });
   const [experiences, setExperiences] = useState([]);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
+  const [educations, setEducations] = useState([]);
 
   function handleNext() {
     if (currentStep < steps.length - 1) {
-      // Mark current step as completed
       if (!completedSteps.includes(currentStep)) {
         setCompletedSteps([...completedSteps, currentStep]);
       }
@@ -74,7 +75,7 @@ const ResumeBuilder: React.FC = () => {
       component: (
         <ExperienceForm
           experiences={experiences}
-          //   @ts-expect-error dcdn
+          // @ts-expect-error dsfn
           setExperiences={setExperiences}
           onNext={handleNext}
           currentStep={currentStep}
@@ -86,7 +87,10 @@ const ResumeBuilder: React.FC = () => {
       label: "Education",
       isCompleted: completedSteps.includes(2),
       isActive: currentStep === 2,
-      component: <div className="text-white">Education Component</div>,
+      component: (
+        // @ts-expect-error typeerror
+        <EducationForm educations={educations} setEducations={setEducations} />
+      ),
     },
     {
       id: "skills",
@@ -148,15 +152,11 @@ const ResumeBuilder: React.FC = () => {
 
   return (
     <div className="w-full pt-24 mx-auto px-4 relative h-screen overflow-y-scroll bg-neutral-900">
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:24px_24px]" />
-      </div>
-
       <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="relative mb-6 max-w-7xl mx-auto"
+        className="relative mb-6 max-w-7xl max-2xl:max-w-6xl mx-auto"
       >
         <div className="relative flex justify-between">
           {steps.map((step, index) => (
@@ -214,13 +214,11 @@ const ResumeBuilder: React.FC = () => {
             <button
               onClick={handleBack}
               disabled={currentStep === 0}
-              className={`px-4 py-2 text-white rounded transition-colors ${
-                currentStep === 0
-                  ? "bg-neutral-700 cursor-not-allowed"
-                  : "bg-lime-500 hover:bg-lime-600"
+              className={`px-4 py-2 flex items-center gap-2 text-white rounded transition-colors ${
+                currentStep === 0 ? " cursor-not-allowed" : " "
               }`}
             >
-              Back
+              <MoveLeft size={22} />
             </button>
             <button
               onClick={handleNext}

@@ -84,7 +84,7 @@ const ContactForm: React.FC<ContactFormProps> = ({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className="w-full max-w-7xl mx-auto mt-10"
+      className="w-full max-w-7xl bg-neutral-800/50 border border-neutral-700 p-6 max-sm:px-4 max-sm:py-2.5 rounded-lg mx-auto mt-10"
     >
       <div className="mb-8">
         <h2 className="text-3xl md:text-3xl lg:text-5xl mb-2">
