@@ -156,12 +156,15 @@ const HeroSection = () => {
                 variants={itemVariants}
                 className="flex flex-col sm:flex-row gap-3 md:gap-4 w-full sm:w-auto"
               >
-                <motion.button className="px-6 sm:px-8 py-3 sm:py-4 bg-lime-600  text-white rounded-xl font-semibold flex items-center justify-center gap-2 transition-all shadow-lg w-full sm:w-auto">
+                <motion.a
+                  href="/create-resume"
+                  className="px-6 sm:px-8 py-3 sm:py-4 bg-lime-600  text-white rounded-xl font-semibold flex items-center justify-center gap-2 transition-all shadow-lg w-full sm:w-auto"
+                >
                   <span className="text-sm sm:text-base">
                     Start Building Free
                   </span>
                   <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
-                </motion.button>
+                </motion.a>
 
                 <button className="px-6 sm:px-8 py-3 sm:py-4 bg-neutral-800 hover:bg-neutral-700 text-white rounded-xl font-semibold transition-all border border-neutral-700 text-sm sm:text-base w-full sm:w-auto">
                   View Templates
